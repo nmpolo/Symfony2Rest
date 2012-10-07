@@ -7,3 +7,8 @@ nmpolo_rest:
 #_internal:
 #    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
 #    prefix:   /_internal
+
+nmpolo:
+    type: rest
+    resource: "@NmpoloRestBundle/Resources/config/routing.yml"
+

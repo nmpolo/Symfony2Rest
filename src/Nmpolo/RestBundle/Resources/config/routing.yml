@@ -1,0 +1,4 @@
+organisation:
+    type: rest
+    resource: Nmpolo\RestBundle\Controller\OrganisationController
+
