@@ -57,3 +57,9 @@ swiftmailer:
     username:  %mailer_user%
     password:  %mailer_password%
     spool:     { type: memory }
+
+# Sensio Framework Extra Configuration
+sensio_framework_extra:
+    view:
+        annotations: false
+
