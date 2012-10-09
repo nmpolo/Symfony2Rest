@@ -22,5 +22,23 @@ class OrganisationController extends FOSRestController
             'entities' => $entities,
         );
     }
+
+    /**
+     * @Rest\View()
+     */
+    public function getAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('NmpoloRestBundle:Organisation')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find organisation entity');
+        }
+
+        return array(
+            'entity' => $entity,
+        );
+    }
 }
 
