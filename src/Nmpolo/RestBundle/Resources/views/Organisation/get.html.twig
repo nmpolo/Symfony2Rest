@@ -1,1 +1,7 @@
-{{ entity.name }}
+{{ entity.name }}<br />
+Users:
+<ul>
+    {% for user in entity.users %}
+    <li>{{ user.name}}</li>
+    {% endfor %}
+</ul>

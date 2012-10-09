@@ -1,5 +1,13 @@
 <ul>
 {% for entity in entities %}
-<li>{{ entity.name }}</li>
+<li>
+    {{ entity.name }}<br />
+    Users:
+    <ul>
+        {% for user in entity.users %}
+        <li>{{ user.name}}</li>
+        {% endfor %}
+    </ul>
+</li>
 {% endfor %}
 </ul>
