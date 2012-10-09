@@ -1,0 +1,8 @@
+<ul>
+{% for entity in entities %}
+<li>
+    {{ entity.name }}<br />
+    Organisation: {{ entity.organisation.name }}
+</li>
+{% endfor %}
+</ul>
