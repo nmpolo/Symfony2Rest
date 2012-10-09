@@ -28,6 +28,13 @@ class User
      */
     private $name;
 
+    /**
+     * @var Organisation $organisation
+     *
+     * @ORM\ManyToOne(targetEntity="Organisation", inversedBy="users")
+     */
+    private $organisation;
+
 
     /**
      * Get id
@@ -60,5 +67,28 @@ class User
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set organisation
+     *
+     * @param Nmpolo\RestBundle\Entity\Organisation $organisation
+     * @return User
+     */
+    public function setOrganisation(\Nmpolo\RestBundle\Entity\Organisation $organisation = null)
+    {
+        $this->organisation = $organisation;
+    
+        return $this;
+    }
+
+    /**
+     * Get organisation
+     *
+     * @return Nmpolo\RestBundle\Entity\Organisation 
+     */
+    public function getOrganisation()
+    {
+        return $this->organisation;
     }
 }
