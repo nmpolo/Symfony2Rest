@@ -18,12 +18,13 @@ class OrganisationType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Nmpolo\RestBundle\Entity\Organisation'
+            'data_class' => 'Nmpolo\RestBundle\Entity\Organisation',
+            'csrf_protection' => false,
         ));
     }
 
     public function getName()
     {
-        return 'nmpolo_restbundle_organisationtype';
+        return 'organisation';
     }
 }

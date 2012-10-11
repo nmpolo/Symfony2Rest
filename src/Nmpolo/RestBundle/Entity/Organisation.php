@@ -3,6 +3,7 @@
 namespace Nmpolo\RestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints;
 
 /**
  * Nmpolo\RestBundle\Entity\Organisation
@@ -25,6 +26,9 @@ class Organisation
      * @var string $name
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Constraints\NotNull
+     * @Constraints\NotBlank
      */
     private $name;
 

@@ -6,6 +6,8 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\Rest\Util\Codes;
 use Symfony\Component\HttpFoundation\Request;
+use Nmpolo\RestBundle\Entity\Organisation;
+use Nmpolo\RestBundle\Form\OrganisationType;
 
 class OrganisationController extends FOSRestController
 {
@@ -38,6 +40,34 @@ class OrganisationController extends FOSRestController
 
         return array(
             'entity' => $entity,
+        );
+    }
+
+    /**
+     * @Rest\View()
+     */
+    public function cpostAction(Request $request)
+    {
+        $entity = new Organisation();
+        $form = $this->createForm(new OrganisationType(), $entity);
+        $form->bind($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirectView(
+                $this->generateUrl(
+                    'get_organisation',
+                    array('id' => $entity->getId())
+                ),
+                Codes::HTTP_CREATED
+            );
+        }
+
+        return array(
+            'form' => $form,
         );
     }
 }
