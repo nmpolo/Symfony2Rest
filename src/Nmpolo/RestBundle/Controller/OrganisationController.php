@@ -68,6 +68,28 @@ class OrganisationController extends FOSRestController
     /**
      * @Rest\View()
      */
+    public function putAction(Request $request, $id)
+    {
+        $entity = $this->getEntity($id);
+        $form = $this->createForm(new OrganisationType(), $entity);
+        $form->bind($request);
+
+        if($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->view(null, Codes::HTTP_NO_CONTENT);
+        }
+
+        return array(
+            'form' => $form,
+        );
+    }
+
+    /**
+     * @Rest\View()
+     */
     public function deleteAction($id)
     {
         $entity = $this->getEntity($id);
