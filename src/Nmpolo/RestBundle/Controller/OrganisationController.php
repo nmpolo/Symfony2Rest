@@ -30,13 +30,7 @@ class OrganisationController extends FOSRestController
      */
     public function getAction($id)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('NmpoloRestBundle:Organisation')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find organisation entity');
-        }
+        $entity = $this->getEntity($id);
 
         return array(
             'entity' => $entity,
@@ -70,5 +64,36 @@ class OrganisationController extends FOSRestController
             'form' => $form,
         );
     }
-}
 
+    /**
+     * @Rest\View()
+     */
+    public function deleteAction($id)
+    {
+        $entity = $this->getEntity($id);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($entity);
+        $em->flush();
+
+        return $this->view(null, Codes::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Get entity instance
+     * @var integer $id Id of the entity
+     * @return Organisation
+     */
+    protected function getEntity($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('NmpoloRestBundle:Organisation')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find organisation entity');
+        }
+
+        return $entity;
+    }
+}
