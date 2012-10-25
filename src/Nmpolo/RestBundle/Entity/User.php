@@ -3,12 +3,17 @@
 namespace Nmpolo\RestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints;
+use JMS\SerializerBundle\Annotation\ExclusionPolicy;
+use JMS\SerializerBundle\Annotation\Expose;
 
 /**
  * Nmpolo\RestBundle\Entity\User
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Nmpolo\RestBundle\Entity\UserRepository")
+ *
+ * @ExclusionPolicy("all")
  */
 class User
 {
@@ -18,6 +23,8 @@ class User
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Expose
      */
     private $id;
 
@@ -25,6 +32,10 @@ class User
      * @var string $name
      *
      * @ORM\Column(name="name", type="string", length=255)
+     *
+     * @Constraints\NotNull
+     * @Constraints\NotBlank
+     * @Expose
      */
     private $name;
 

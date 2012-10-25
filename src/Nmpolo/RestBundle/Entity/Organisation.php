@@ -4,12 +4,16 @@ namespace Nmpolo\RestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints;
+use JMS\SerializerBundle\Annotation\ExclusionPolicy;
+use JMS\SerializerBundle\Annotation\Expose;
 
 /**
  * Nmpolo\RestBundle\Entity\Organisation
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Nmpolo\RestBundle\Entity\OrganisationRepository")
+ *
+ * @ExclusionPolicy("all")
  */
 class Organisation
 {
@@ -19,6 +23,8 @@ class Organisation
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     *
+     * @Expose
      */
     private $id;
 
@@ -29,6 +35,7 @@ class Organisation
      *
      * @Constraints\NotNull
      * @Constraints\NotBlank
+     * @Expose
      */
     private $name;
 
@@ -36,6 +43,8 @@ class Organisation
      * @var Doctrine\Common\Collections\Collection $users
      *
      * @ORM\OneToMany(targetEntity="User", mappedBy="organisation")
+     *
+     * @Expose
      */
     private $users;
 
