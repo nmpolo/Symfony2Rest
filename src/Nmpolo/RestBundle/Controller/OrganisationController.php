@@ -12,6 +12,10 @@ use Nmpolo\RestBundle\Form\OrganisationType;
 class OrganisationController extends FOSRestController
 {
     /**
+     * Collection get action
+     * @var Request $request
+     * @return array
+     *
      * @Rest\View()
      */
     public function cgetAction(Request $request)
@@ -26,6 +30,10 @@ class OrganisationController extends FOSRestController
     }
 
     /**
+     * Get action
+     * @var integer $id Id of the entity
+     * @return array
+     *
      * @Rest\View()
      */
     public function getAction($id)
@@ -38,7 +46,9 @@ class OrganisationController extends FOSRestController
     }
 
     /**
-     * @Rest\View()
+     * Collection post action
+     * @var Request $request
+     * @return View|array
      */
     public function cpostAction(Request $request)
     {
@@ -66,7 +76,10 @@ class OrganisationController extends FOSRestController
     }
 
     /**
-     * @Rest\View()
+     * Put action
+     * @var Request $request
+     * @var integer $id Id of the entity
+     * @return View|array
      */
     public function putAction(Request $request, $id)
     {
@@ -74,7 +87,7 @@ class OrganisationController extends FOSRestController
         $form = $this->createForm(new OrganisationType(), $entity);
         $form->bind($request);
 
-        if($form->isValid()) {
+        if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
@@ -88,7 +101,9 @@ class OrganisationController extends FOSRestController
     }
 
     /**
-     * @Rest\View()
+     * Delete action
+     * @var integer $id Id of the entity
+     * @return View
      */
     public function deleteAction($id)
     {

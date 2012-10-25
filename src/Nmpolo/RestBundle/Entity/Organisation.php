@@ -59,7 +59,7 @@ class Organisation
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -79,7 +79,7 @@ class Organisation
     {
         $this->users = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
     /**
      * Add users
      *
@@ -89,7 +89,7 @@ class Organisation
     public function addUser(\Nmpolo\RestBundle\Entity\User $users)
     {
         $this->users[] = $users;
-    
+
         return $this;
     }
 

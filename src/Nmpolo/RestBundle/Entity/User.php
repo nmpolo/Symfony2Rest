@@ -55,7 +55,7 @@ class User
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -78,7 +78,7 @@ class User
     public function setOrganisation(\Nmpolo\RestBundle\Entity\Organisation $organisation = null)
     {
         $this->organisation = $organisation;
-    
+
         return $this;
     }
 

@@ -11,16 +11,17 @@ class OrganisationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-        ;
+            ->add('name');
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Nmpolo\RestBundle\Entity\Organisation',
-            'csrf_protection' => false,
-        ));
+        $resolver->setDefaults(
+            array(
+                'data_class' => 'Nmpolo\RestBundle\Entity\Organisation',
+                'csrf_protection' => false,
+            )
+        );
     }
 
     public function getName()
