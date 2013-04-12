@@ -4,13 +4,14 @@ namespace Nmpolo\RestBundle\Controller;
 
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\Rest\Util\Codes;
 use Symfony\Component\HttpFoundation\Request;
 use Nmpolo\RestBundle\Entity\Organisation;
 use Nmpolo\RestBundle\Entity\User;
 use Nmpolo\RestBundle\Form\UserType;
 
-class UserController extends FOSRestController
+class UserController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * Collection get action
