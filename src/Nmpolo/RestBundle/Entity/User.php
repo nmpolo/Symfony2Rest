@@ -4,8 +4,8 @@ namespace Nmpolo\RestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints;
-use JMS\SerializerBundle\Annotation\ExclusionPolicy;
-use JMS\SerializerBundle\Annotation\Expose;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * Nmpolo\RestBundle\Entity\User
