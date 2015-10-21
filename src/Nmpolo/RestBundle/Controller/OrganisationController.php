@@ -2,136 +2,122 @@
 
 namespace Nmpolo\RestBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\View\View;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 use Nmpolo\RestBundle\Entity\Organisation;
+use Nmpolo\RestBundle\Entity\OrganisationRepository;
 use Nmpolo\RestBundle\Form\OrganisationType;
 
-class OrganisationController extends FOSRestController implements ClassResourceInterface
+class OrganisationController implements ClassResourceInterface
 {
+    private $manager;
+
+    private $repo;
+
+    private $formFactory;
+
+    private $router;
+
     /**
-     * Collection get action
-     * @var Request $request
-     * @return array
-     *
-     * @Rest\View()
+     * Controller constructor
+     * @var ObjectManager $manager
+     * @var OrganisationRepository $repo
+     * @var FormFactoryInterface $formFactory
+     * @var RouterInterface $router
      */
-    public function cgetAction(Request $request)
+    public function __construct(ObjectManager $manager, OrganisationRepository $repo, FormFactoryInterface $formFactory, RouterInterface $router)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('NmpoloRestBundle:Organisation')->findAll();
-
-        return array(
-            'entities' => $entities,
-        );
+        $this->manager = $manager;
+        $this->repo = $repo;
+        $this->formFactory = $formFactory;
+        $this->router = $router;
     }
 
     /**
-     * Get action
-     * @var integer $id Id of the entity
-     * @return array
+     * Retrieve all organisations
+     * @return Collection
      *
      * @Rest\View()
      */
-    public function getAction($id)
+    public function cgetAction()
     {
-        $entity = $this->getEntity($id);
-
-        return array(
-            'entity' => $entity,
-        );
+        $organisations = $this->repo->findAll();
+        return $organisations;
     }
 
     /**
-     * Collection post action
+     * Retrieve an organisation
+     * @var Organisation $organisation
+     * @return Organisation
+     *
+     * @Rest\View()
+     */
+    public function getAction(Organisation $organisation)
+    {
+        return $organisation;
+    }
+
+    /**
+     * Create an organisation
      * @var Request $request
-     * @return View|array
+     * @return View|FormInterface
      */
     public function cpostAction(Request $request)
     {
-        $entity = new Organisation();
-        $form = $this->createForm(new OrganisationType(), $entity);
-        $form->bind($request);
-
+        $organisation = new Organisation();
+        $form = $this->formFactory->createNamed('', new OrganisationType(), $organisation);
+        $form->handleRequest($request);
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $this->manager->persist($organisation);
+            $this->manager->flush($organisation);
 
-            return $this->redirectView(
-                $this->generateUrl(
-                    'get_organisation',
-                    array('id' => $entity->getId())
-                ),
-                Codes::HTTP_CREATED
+            $url = $this->router->generate(
+                'get_organisation',
+                array('organisation' => $organisation->getId())
             );
+            return View::createRedirect($url, Codes::HTTP_CREATED);
         }
 
-        return array(
-            'form' => $form,
-        );
+        return $form;
     }
 
     /**
-     * Put action
+     * Update an organisation
+     * @var Organisation $organisation
      * @var Request $request
-     * @var integer $id Id of the entity
-     * @return View|array
+     * @return View|FormInterface
      */
-    public function putAction(Request $request, $id)
+    public function putAction(Organisation $organisation, Request $request)
     {
-        $entity = $this->getEntity($id);
-        $form = $this->createForm(new OrganisationType(), $entity);
-        $form->bind($request);
-
+        $form = $this->formFactory->createNamed('', new OrganisationType(), $organisation, array('method' => 'PUT'));
+        $form->handleRequest($request);
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+            $this->manager->flush($organisation);
 
-            return $this->view(null, Codes::HTTP_NO_CONTENT);
+            return View::create(null, Codes::HTTP_NO_CONTENT);
         }
 
-        return array(
-            'form' => $form,
-        );
+        return $form;
     }
 
     /**
-     * Delete action
-     * @var integer $id Id of the entity
+     * Delete an organisation
+     * @var Organisation $organisation
      * @return View
      */
-    public function deleteAction($id)
+    public function deleteAction(Organisation $organisation)
     {
-        $entity = $this->getEntity($id);
+        $this->manager->remove($organisation);
+        $this->manager->flush($organisation);
 
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($entity);
-        $em->flush();
-
-        return $this->view(null, Codes::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Get entity instance
-     * @var integer $id Id of the entity
-     * @return Organisation
-     */
-    protected function getEntity($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('NmpoloRestBundle:Organisation')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find organisation entity');
-        }
-
-        return $entity;
+        return View::create(null, Codes::HTTP_NO_CONTENT);
     }
 }

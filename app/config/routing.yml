@@ -1,14 +1,4 @@
-nmpolo_rest:
-    resource: "@NmpoloRestBundle/Controller/"
-    type:     annotation
-    prefix:   /
-
-# Internal routing configuration to handle ESI
-#_internal:
-#    resource: "@FrameworkBundle/Resources/config/routing/internal.xml"
-#    prefix:   /_internal
-
 nmpolo:
     type: rest
     resource: "@NmpoloRestBundle/Resources/config/routing.yml"
-
+    prefix: /

@@ -2,175 +2,134 @@
 
 namespace Nmpolo\RestBundle\Controller;
 
-use FOS\RestBundle\Controller\FOSRestController;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\View\View;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 use Nmpolo\RestBundle\Entity\Organisation;
 use Nmpolo\RestBundle\Entity\User;
+use Nmpolo\RestBundle\Entity\UserRepository;
 use Nmpolo\RestBundle\Form\UserType;
 
-class UserController extends FOSRestController implements ClassResourceInterface
+class UserController implements ClassResourceInterface
 {
+    private $manager;
+
+    private $repo;
+
+    private $formFactory;
+
+    private $router;
+
     /**
-     * Collection get action
-     * @var Request $request
-     * @var integer $organisationId Id of the entity's organisation
-     * @return array
+     * Controller constructor
+     * @var ObjectManager $manager
+     * @var UserRepository $repo
+     * @var FormFactoryInterface $formFactory
+     * @var RouterInterface $router
+     */
+    public function __construct(ObjectManager $manager, UserRepository $repo, FormFactoryInterface $formFactory, RouterInterface $router)
+    {
+        $this->manager = $manager;
+        $this->repo = $repo;
+        $this->formFactory = $formFactory;
+        $this->router = $router;
+    }
+
+    /**
+     * Retrieve all users for an organisation
+     * @var Organisation $organisation
+     * @return Collection
      *
      * @Rest\View()
      */
-    public function cgetAction(Request $request, $organisationId)
+    public function cgetAction(Organisation $organisation)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('NmpoloRestBundle:User')->findBy(
-            array(
-                'organisation' => $organisationId,
-            )
-        );
-
-        return array(
-            'entities' => $entities,
-        );
+        $users = $this->repo->findByOrganisation($organisation);
+        return $users;
     }
 
     /**
-     * Get action
-     * @var integer $organisationId Id of the entity's organisation
-     * @var integer $id Id of the entity
-     * @return array
-     *
-     * @Rest\View()
-     */
-    public function getAction($organisationId, $id)
-    {
-        $entity = $this->getEntity($organisationId, $id);
-
-        return array(
-            'entity' => $entity,
-        );
-    }
-
-    /**
-     * Collection post action
-     * @var Request $request
-     * @var integer $organisationId Id of the entity's organisation
-     * @return View|array
-     */
-    public function cpostAction(Request $request, $organisationId)
-    {
-        $organisation = $this->getOrganisation($organisationId);
-        $entity = new User();
-        $entity->setOrganisation($organisation);
-        $form = $this->createForm(new UserType(), $entity);
-        $form->bind($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirectView(
-                $this->generateUrl(
-                    'get_organisation_user',
-                    array(
-                        'organisationId' => $entity->getOrganisation()->getId(),
-                        'id' => $entity->getId()
-                    )
-                ),
-                Codes::HTTP_CREATED
-            );
-        }
-
-        return array(
-            'form' => $form,
-        );
-    }
-
-    /**
-     * Put action
-     * @var Request $request
-     * @var integer $organisationId Id of the entity's organisation
-     * @var integer $id Id of the entity
-     * @return View|array
-     */
-    public function putAction(Request $request, $organisationId, $id)
-    {
-        $entity = $this->getEntity($organisationId, $id);
-        $form = $this->createForm(new UserType(), $entity);
-        $form->bind($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->view(null, Codes::HTTP_NO_CONTENT);
-        }
-
-        return array(
-            'form' => $form,
-        );
-    }
-
-    /**
-     * Delete action
-     * @var integer $organisationId Id of the entity's organisation
-     * @var integer $id Id of the entity
-     * @return View
-     */
-    public function deleteAction($organisationId, $id)
-    {
-        $entity = $this->getEntity($organisationId, $id);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->remove($entity);
-        $em->flush();
-
-        return $this->view(null, Codes::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * Get entity instance
-     * @var integer $organisationId Id of the entity's organisation
-     * @var integer $id Id of the entity
+     * Retrieve a user
+     * @var Organisation $organisation
+     * @var User $user
      * @return User
+     *
+     * @Rest\View()
+     * @ParamConverter("user", options={"mapping": {"organisation": "organisation", "user": "id"}})
      */
-    protected function getEntity($organisationId, $id)
+    public function getAction(Organisation $organisation, User $user)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('NmpoloRestBundle:User')->findOneBy(
-            array(
-                'id' => $id,
-                'organisation' => $organisationId,
-            )
-        );
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find user entity');
-        }
-
-        return $entity;
+        return $user;
     }
 
     /**
-     * Get organisation instance
-     * @var integer $id Id of the organisation
-     * @return Organisation
+     * Create a user for an organisation
+     * @var Organisation $organisation
+     * @var Request $request
+     * @return View|FormInterface
      */
-    protected function getOrganisation($id)
+    public function cpostAction(Organisation $organisation, Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        $user = new User($organisation);
+        $form = $this->formFactory->createNamed('', new UserType(), $user);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $this->manager->persist($user);
+            $this->manager->flush($user);
 
-        $entity = $em->getRepository('NmpoloRestBundle:Organisation')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find organisation entity');
+            $url = $this->router->generate(
+                'get_organisation_user',
+                array('organisation' => $organisation->getId(), 'user' => $user->getId())
+            );
+            return View::createRedirect($url, Codes::HTTP_CREATED);
         }
 
-        return $entity;
+        return $form;
+    }
+
+    /**
+     * Update a user
+     * @var Organisation $organisation
+     * @var User $user
+     * @var Request $request
+     * @return View|FormInterface
+     *
+     * @ParamConverter("user", options={"mapping": {"organisation": "organisation", "user": "id"}})
+     */
+    public function putAction(Organisation $organisation, User $user, Request $request)
+    {
+        $form = $this->formFactory->createNamed('', new UserType(), $user, array('method' => 'PUT'));
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $this->manager->flush($user);
+
+            return View::create(null, Codes::HTTP_NO_CONTENT);
+        }
+
+        return $form;
+    }
+
+    /**
+     * Delete a user
+     * @var Organisation $organisation
+     * @var User $user
+     * @return View
+     * 
+     * @ParamConverter("user", options={"mapping": {"organisation": "organisation", "user": "id"}})
+     */
+    public function deleteAction(Organisation $organisation, User $user)
+    {
+        $this->manager->remove($user);
+        $this->manager->flush($user);
+
+        return View::create(null, Codes::HTTP_NO_CONTENT);
     }
 }

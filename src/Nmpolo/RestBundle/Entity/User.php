@@ -46,6 +46,10 @@ class User
      */
     private $organisation;
 
+    public function __construct(Organisation $organisation)
+    {
+        $this->organisation = $organisation;
+    }
 
     /**
      * Get id

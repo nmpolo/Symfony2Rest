@@ -1,7 +1,7 @@
 organisation:
     type: rest
-    resource: Nmpolo\RestBundle\Controller\OrganisationController
+    resource: nmpolo_rest.controller.organisation
 user:
     type: rest
+    resource: nmpolo_rest.controller.user
     parent: organisation
-    resource: Nmpolo\RestBundle\Controller\UserController
