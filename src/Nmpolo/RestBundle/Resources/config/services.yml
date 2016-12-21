@@ -1,20 +1,18 @@
 services:
     nmpolo_rest.controller.organisation:
         class: Nmpolo\RestBundle\Controller\OrganisationController
-        arguments: [@doctrine.orm.entity_manager, @nmpolo_rest.repo.organisation, @form.factory, @router]
+        arguments: ['@doctrine.orm.entity_manager', '@nmpolo_rest.repo.organisation', '@form.factory', '@router']
     nmpolo_rest.controller.user:
         class: Nmpolo\RestBundle\Controller\UserController
-        arguments: [@doctrine.orm.entity_manager, @nmpolo_rest.repo.user, @form.factory, @router]
+        arguments: ['@doctrine.orm.entity_manager', '@nmpolo_rest.repo.user', '@form.factory', '@router']
 
     nmpolo_rest.repo.organisation:
         class: Nmpolo\RestBundle\Entity\OrganisationRepository
-        factory_service: doctrine.orm.default_entity_manager
-        factory_method: getRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Nmpolo\RestBundle\Entity\Organisation
     nmpolo_rest.repo.user:
         class: Nmpolo\RestBundle\Entity\UserRepository
-        factory_service: doctrine.orm.default_entity_manager
-        factory_method: getRepository
+        factory: ['@doctrine.orm.default_entity_manager', getRepository]
         arguments:
             - Nmpolo\RestBundle\Entity\User

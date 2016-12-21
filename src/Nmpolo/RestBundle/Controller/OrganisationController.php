@@ -14,7 +14,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Nmpolo\RestBundle\Entity\Organisation;
 use Nmpolo\RestBundle\Entity\OrganisationRepository;
-use Nmpolo\RestBundle\Form\OrganisationType;
 
 class OrganisationController implements ClassResourceInterface
 {
@@ -73,7 +72,7 @@ class OrganisationController implements ClassResourceInterface
     public function cpostAction(Request $request)
     {
         $organisation = new Organisation();
-        $form = $this->formFactory->createNamed('', new OrganisationType(), $organisation);
+        $form = $this->formFactory->createNamed('', 'Nmpolo\RestBundle\Form\OrganisationType', $organisation);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->manager->persist($organisation);
@@ -97,7 +96,7 @@ class OrganisationController implements ClassResourceInterface
      */
     public function putAction(Organisation $organisation, Request $request)
     {
-        $form = $this->formFactory->createNamed('', new OrganisationType(), $organisation, array('method' => 'PUT'));
+        $form = $this->formFactory->createNamed('', 'Nmpolo\RestBundle\Form\OrganisationType', $organisation, array('method' => 'PUT'));
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->manager->flush($organisation);

@@ -16,7 +16,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Nmpolo\RestBundle\Entity\Organisation;
 use Nmpolo\RestBundle\Entity\User;
 use Nmpolo\RestBundle\Entity\UserRepository;
-use Nmpolo\RestBundle\Form\UserType;
 
 class UserController implements ClassResourceInterface
 {
@@ -79,7 +78,7 @@ class UserController implements ClassResourceInterface
     public function cpostAction(Organisation $organisation, Request $request)
     {
         $user = new User($organisation);
-        $form = $this->formFactory->createNamed('', new UserType(), $user);
+        $form = $this->formFactory->createNamed('', 'Nmpolo\RestBundle\Form\UserType', $user);
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->manager->persist($user);
@@ -106,7 +105,7 @@ class UserController implements ClassResourceInterface
      */
     public function putAction(Organisation $organisation, User $user, Request $request)
     {
-        $form = $this->formFactory->createNamed('', new UserType(), $user, array('method' => 'PUT'));
+        $form = $this->formFactory->createNamed('', 'Nmpolo\RestBundle\Form\UserType', $user, array('method' => 'PUT'));
         $form->handleRequest($request);
         if ($form->isValid()) {
             $this->manager->flush($user);

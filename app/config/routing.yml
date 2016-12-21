@@ -1,4 +1,4 @@
 nmpolo:
-    type: rest
     resource: "@NmpoloRestBundle/Resources/config/routing.yml"
+    type: rest
     prefix: /
